@@ -7,83 +7,109 @@
  * MIT License - https://opensource.org/licenses/MIT
  */
 
+// URL da API REST (back-end). Não esqueça da "/" no final. 
+const apiURL = 'http://localhost:3300/';
+
 /**
- * Aqui vamos fazer algumas predefinições importantes para o funcionamento do
- * aplicativo de forma mais dinâmica. Você pode implementar novas informações,
- * ampliando 'config'.
- * 
- * No futuro, essas informações serão armazenadas e obtidas do banco de dados.
+ * Super global que armazena as configurações gerais do aplicativo, obtidas do 
+ * servidor (banco de dados) via API REST (JSON).
  */
-var config = {
+var config = {}
 
-    // Largura mínima em pixels para troca do modo responsivo - small / middle.
-    clientWidth: 768,
+/**
+ * Promessa de acesso ao servidor para obter os dados de configuração do site.
+ * O JavaScript do site só pode ser executado se os valores de 'config' foram
+ * recebidos do servidor.
+ */
+fetch(apiURL + 'config')
+    .then((resolveData) => {
 
-    // Nome do aplicativo que será usado na tag <title>...</title>.
-    // Também pode ser usado em outras seções como no <header>...</header>.
-    appName: 'My.Docs.App',
+        // Se deu certo -> Promessa cumprida.
+        if (resolveData.ok) {
 
-    // Slogan do aplicativo que será usado na tag <title>...</title>.
-    appSlogan: 'Seus documentos em nossas mãos.',
+            // Extraindo os dados da configuração da promessa.
+            resolveData.json().then((data) => {
 
-    // Separador que será usado na tag <title>...</title>.
-    separator: '.:.',
+                // Recebe os dados de 'config' e armazena na variável config.
+                config = data;
 
-    // Logotipo do site.
-    appLogo: 'assets/img/logo_64.png',
+                // Executa aplicativo principal.
+                mainApp();
+            });
 
-    // URL da API REST (back-end). Não esqueça da "/" no final. 
-    apiURL: 'http://localhost:3300/'
+            // Não deu certo -> Promessa não cumprida.
+        } else {
+            el('#content').innerHTML = `
+                <article>
+                    <h3 class="red">Ooooops!</h3>
+                    <p class="red">Algo deu muito errado mesmo!</p>
+                    <p class="red">Por favor, tente mais tarde...</p>
+                </article>
+            `;
+        }
+    });
+
+/**
+ * Aplicativo principal.
+ */
+function mainApp() {
+    /**
+     * Obtém nome da página que está sendo acessada, do 'localStorage'.
+     * Estude './404.html' para mais detalhes.
+     */
+    let path = localStorage.getItem('path');
+
+    // Lista de redes sociais no rodapé.
+    getSocialList('.social');
+
+    // Se cliente acessou uma página específica...
+    if (path) {
+
+        // Limpa o 'localStorage'.
+        localStorage.removeItem('path');
+
+        // Acessa a página solicitada.
+        loadPage(path);
+
+        // Se não solicitou uma página específica...
+    } else {
+
+        // Carrega a página inicial.
+        loadPage('home');
+    }
+
+    /**
+     * Força o fechamento do menu na incialização do aplicativo com 'hideMenu()' e
+     * monitora as dimensões da view. Executa 'changeRes()' se ocorrerem mudanças.
+     *   Referências: https://www.w3schools.com/jsref/event_onresize.asp
+     */
+    hideMenu();
+    window.onresize = changeRes;
+
+    /**
+     * Monitora cliques nas tags <a>...</a> e executa 'routerLink()' se ocorrer.
+     *   Referências: https://www.w3schools.com/js/js_loop_for.asp
+     */
+    var links = els('a');
+    for (var i = 0; i < links.length; i++) {
+        links[i].onclick = routerLink;
+    }
+
+    /**
+     * Define o logotipo conforme 'config'
+     */
+    el('#logo').setAttribute('src', config.appLogo);
+
+    /**
+     * Define o título do site.
+     */
+    el('#siteName').innerHTML = config.appName;
+
+    /**
+     * Define mensagem de copyright conforme 'config'.
+     */
+    el('.license').innerHTML = '<i class="fab fa-creative-commons fa-fw"></i> ' + config.copyright;
 }
-
-/**
- * Obtém nome da página que está sendo acessada, do 'localStorage'.
- * Estude './404.html' para mais detalhes.
- */
-let path = localStorage.getItem('path');
-
-// Se cliente acessou uma página específica...
-if (path) {
-
-    // Limpa o 'localStorage'.
-    localStorage.removeItem('path');
-
-    // Acessa a página solicitada.
-    loadPage(path);
-
-    // Se não solicitou uma página específica...
-} else {
-
-    // Carrega a página inicial.
-    loadPage('home');
-}
-
-/**
- * Força o fechamento do menu na incialização do aplicativo com 'hideMenu()' e
- * monitora as dimensões da view. Executa 'changeRes()' se ocorrerem mudanças.
- *   Referências: https://www.w3schools.com/jsref/event_onresize.asp
- */
-hideMenu();
-window.onresize = changeRes;
-
-/**
- * Monitora cliques nas tags <a>...</a> e executa 'routerLink()' se ocorrer.
- *   Referências: https://www.w3schools.com/js/js_loop_for.asp
- */
-var links = els('a');
-for (var i = 0; i < links.length; i++) {
-    links[i].onclick = routerLink;
-}
-
-/**
- * Define o logotipo conforme 'config'
- */
-el('#logo').setAttribute('src', config.appLogo);
-
-/**
- * Define o título do site.
- */
-el('#siteName').innerHTML = config.appName;
 
 /*******************************
  * Funções Específicas do tema *
@@ -276,7 +302,7 @@ async function getFile(filePath, element = '') {
     // Se declarou um elemento, envia os dados para o innerHTML do elemento.
     else el(element).innerHTML = content;
 
-    // Retorna com true se deu certo
+    // Retorna com true se deu certo.
     return true;
 }
 
@@ -362,4 +388,67 @@ function sanitizeString(stringValue, stripTags = true) {
 
     // Remove espaços antes e depois, se existir
     return stringValue.trim();
+}
+
+/**
+ * Obtém uma lista das redes sociais do aplicativo via API. * 
+ *   'element' define onde a lista será exibida.
+ *   'fullList' se 'true', lista todos os contatos
+ *              se 'false', não lista os contatos com "nofooter": true
+ *
+ *    Por default, 'fullList' = 'true'
+ * 
+ *   Exemplos:
+ *     getSocialList('.social') --> Gera a lista no rodapé.
+ *     getSocialList('.contact-list', true); --> Gera a lista na aside.
+ */
+function getSocialList(element, fullList = false) {
+
+    // View que exibe a lista.
+    var socialList = '';
+
+    // Obtém a lista do servidor (API)
+    fetch(apiURL + 'social')
+        .then((socialData) => {
+
+            // Se deu certo...
+            if (socialData.ok) {
+
+                // Obtém os dados e armazena em 'data'.
+                socialData.json().then((data) => {
+
+                    // Itera 'data'
+                    for (let i = 0; i < data.length; i++) {
+
+                        // Se é para exibir a lista completa...
+                        if (fullList) {
+
+                            // Monta a view.
+                            socialList += `
+                                <a href="${data[i].href}" target="_blank" title="Meu ${data[i].name}">
+                                    <i class="${data[i].icon}"></i><span>${data[i].name}</span>
+                                </a>                        
+                            `;
+
+                            // Se é para exibir so redes sociais...
+                        } else {
+
+                            // Descarta o que não é rede social ("nofooter": true)
+                            if (!data[i].nofooter) {
+
+                                // Monta a view.
+                                socialList += `
+                                    <a href="${data[i].href}" target="_blank" title="Meu ${data[i].name}">
+                                        <i class="${data[i].icon}"></i><span>${data[i].name}</span>
+                                    </a>                        
+                                `;
+                            }
+                        }
+                    }
+
+                    // Exibe a view no elemento selecionado.
+                    el(element).innerHTML = socialList;
+                })
+            }
+        });
 }

@@ -23,12 +23,8 @@ setTitle('Faça contato');
  */
 if (typeof sendForm !== 'function') {
 
-    console.log('Criando função "sendForm"...');
-
-    // Função que processa o formulario
+    // Função que processa o formulário
     window.sendForm = function () {
-
-        console.log('Enviando contato...');
 
         // Obtém os campos do formulário e sanitiza.
         var contact = {
@@ -52,12 +48,15 @@ if (typeof sendForm !== 'function') {
                 // Reescreve o campo
                 el(`#contact${ucKey}`).value = '';
 
+                // Marca o formulário como vazio
                 empty = true;
             }
         }
+
+        // Se formulário vazio, não processa.
         if (empty) return false;
 
-        // Adiciona a data de envio e o status do contato
+        // Adiciona a data de envio e o status do contato.
         contact.date = getSystemDate();
         contact.status = 'recebido';
 
@@ -70,7 +69,7 @@ if (typeof sendForm !== 'function') {
          * 
          * Veja um exemplo à seguir...
          */
-        console.log('Salvei isso no banco de dados --> ', contact);
+        // console.log('Salvei isso no banco de dados --> ', contact);
 
         /**
          * Faz a conexão com a API REST contendo o banco de dados usando o
@@ -82,7 +81,7 @@ if (typeof sendForm !== 'function') {
          *   Referências:
          *     https://github.com/typicode/json-server
          */
-        fetch(`${config.apiURL}contacts`, {
+        fetch(apiURL + 'contacts', {
             method: "POST",
             body: JSON.stringify(contact),
             headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -98,7 +97,7 @@ if (typeof sendForm !== 'function') {
                     el('#feedback').innerHTML = `
                         <h2>Olá!</h2>
                         <p class="red">Algo deu errado e não foi possível enviar seu contato.</p>
-                        <p class="red">por favor, tente mais tarde.</p>
+                        <p class="red">Por favor, tente mais tarde.</p>
                         <p><em>Obrigado!</em></p>
                     `;
 
@@ -141,8 +140,7 @@ if (typeof sendForm !== 'function') {
          */
         return false;
     }
-} else
-    console.log('Função "sendForm" já existe na memória. Não vou criar...');
+}
 
 /**
  * Processa digitação nos campos.
@@ -162,27 +160,34 @@ if (typeof sendForm !== 'function') {
  */
 if (typeof inputFilters !== 'function') {
     window.inputFilters = function () {
-        
+
         // Remove quaisquer espaços no começo do campo.
         this.value = this.value.trimStart();
 
         // Remove espaços duplicados.
-        this.value = this.value.replace(/\s{2,}/g , ' ');
+        this.value = this.value.replace(/\s{2,}/g, ' ');
     }
 }
 
-/**
- * Processa o envio do formulário.
- *   Referências:
- *     https://www.w3schools.com/jsref/event_onsubmit.asp
- */
-el('#contact').onsubmit = sendForm;
+// Se o formulário já existe...
+if (el('#contact')) {
 
-/**
- * Processa cada campo do formulário ao ser preenchido.
- * Chama 'inputFilters' quando uma tecla é solta.
- */
-var inputs = el('#contact').elements;
-for (let i = 0; i < inputs.length; i++) {
-    inputs[i].onkeyup = inputFilters;
+    /**
+     * Processa o envio do formulário.
+     *   Referências:
+     *     https://www.w3schools.com/jsref/event_onsubmit.asp
+     */
+    el('#contact').onsubmit = sendForm;
+
+    /**
+     * Processa cada campo do formulário ao ser preenchido.
+     * Chama 'inputFilters' quando uma tecla é solta.
+     */
+    var inputs = el('#contact').elements;
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].onkeyup = inputFilters;
+    }
+
+    // Lista de redes sociais na barra lateral
+    getSocialList('.contact-list', true);
 }

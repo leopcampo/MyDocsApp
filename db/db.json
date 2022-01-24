@@ -2,66 +2,77 @@
   "contacts": [
     {
       "name": "Joca da Silva",
-      "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "Mesagem do Joca",
-      "date": "2022-01-17 14:34:03",
-      "status": "recebido",
       "id": 1
     },
     {
       "name": "Joca da Silva",
       "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "Mesagem do Joca",
-      "date": "2022-01-17 14:34:14",
-      "status": "recebido",
       "id": 2
     },
     {
-      "name": "Joca da Silva",
-      "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "Mesagem do Joca",
-      "date": "2022-01-17 14:34:25",
-      "status": "recebido",
       "id": 3
     },
     {
       "name": "Joca da Silva",
       "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "Mesagem do Joca",
-      "date": "2022-01-17 14:44:27",
-      "status": "recebido",
+      "subject": "Assunto do Joca",
+      "message": "Mensagem do Joca",
       "id": 4
     },
     {
       "name": "Joca da Silva",
       "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "Mesagem do Joca",
-      "date": "2022-01-17 14:45:21",
-      "status": "recebido",
+      "subject": "Assunto do Joca",
+      "message": "Mensagem do Joca",
       "id": 5
+    }
+  ],
+  "config": {
+    "clientWidth": "768",
+    "appName": "My.Docs.App",
+    "appSlogan": "Seus documentos em nossas mãos.",
+    "separator": ".:.",
+    "appLogo": "assets/img/logo_64.png",
+    "copyright": "2021 Joca da Silva"
+  },
+  "social": [
+    {
+      "name": "(21) 9876-54321",
+      "href": "tel:5521987654321",
+      "icon": "fas fa-phone-square fa-fw",
+      "nofooter": true
     },
     {
-      "name": "Joca sa Silva",
-      "email": "joca@silva.com",
-      "subject": "Teste do Joca",
-      "message": "dfsadfsdaf dsaf",
-      "date": "2022-01-17 16:42:12",
-      "status": "recebido",
-      "id": 6
+      "name": "WhatsApp",
+      "href": "https://wa.me/5521987654321",
+      "icon": "fab fa-whatsapp-square fa-fw",
+      "nofooter": true
     },
     {
-      "name": "Setembrino Trocatapas",
-      "email": "set@brino.com",
-      "subject": "Teste de mensagem do Setembrino",
-      "message": "Setembrino que falar.<br>Setembrino que falar.<br>Setembrino que falar.<br>Setembrino que falar.<br>Setembrino que falar.<br>Setembrino que falar.<br>Setembrino que falar.",
-      "date": "2022-01-17 16:43:42",
-      "status": "recebido",
-      "id": 7
+      "name": "E-mail",
+      "href": "maito://contato@mydocsapp.com",
+      "icon": "fas fa-envelope-square fa-fw",
+      "nofooter": true
+    },
+    {
+      "name": "GitHub",
+      "href": "https://github.com/Luferat",
+      "icon": "fab fa-github-square fa-fw"
+    },
+    {
+      "name": "LinkedIn",
+      "href": "https://linkedin.com/Luferat",
+      "icon": "fab fa-linkedin fa-fw"
+    },
+    {
+      "name": "Facebook",
+      "href": "https://facebook.com/Luferat",
+      "icon": "fab fa-facebook-square fa-fw"
+    },
+    {
+      "name": "Instagram",
+      "href": "https://instagram.com/Luferat",
+      "icon": "fab fa-instagram-square fa-fw"
     }
   ]
 }
